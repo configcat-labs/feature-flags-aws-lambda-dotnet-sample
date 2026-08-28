@@ -11,7 +11,15 @@ public class Function
 
     static Function()
     {
-        var sdkKey = "YOUR-CONFIGCAT-SDK-KEY";
+#if DEBUG
+        var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-DEVELOPMENT";
+        var logLevel = ConfigCat.Client.LogLevel.Info;
+        var cacheTimeToLive = TimeSpan.FromSeconds(5);
+#else
+        var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-PRODUCTION";
+        var logLevel = ConfigCat.Client.LogLevel.Warning;
+        var cacheTimeToLive = TimeSpan.FromSeconds(60);
+#endif
 
         // Credentials to connect to the local Redis server
         var redisConnectionString = "localhost:6379,password=myRedisPassword123,user=default";
@@ -20,7 +28,8 @@ public class Function
         _configCatClient = ConfigCatClient.Get(sdkKey, options =>
         {
             options.ConfigCache = new RedisConfigCatCache(redisConnectionString);
-            options.PollingMode = PollingModes.LazyLoad(cacheTimeToLive: TimeSpan.FromSeconds(60));
+            options.Logger = new ConfigCatToLambdaLoggerAdapter(logLevel);
+            options.PollingMode = PollingModes.LazyLoad(cacheTimeToLive);
         });
     }
 
@@ -29,14 +38,13 @@ public class Function
         // Ensure the flag key here matches the one in your ConfigCat Dashboard
         var isFeatureEnabled = await _configCatClient.GetValueAsync("myFeatureFlag", false);
 
-        // Log the feature flag value
-        context.Logger.LogInformation($"ConfigCat Flag value: {isFeatureEnabled}");
-
         if (isFeatureEnabled)
         {
-            return "New Feature Logic Enabled";
+            return "Result returned by new logic";
         }
-
-        return "Old Feature Active";
+        else
+        {
+            return "Result returned by old logic";
+        }
     }
 }

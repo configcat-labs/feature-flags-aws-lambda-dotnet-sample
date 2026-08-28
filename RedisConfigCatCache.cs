@@ -1,5 +1,4 @@
-﻿using Amazon.Lambda.Core;
-using ConfigCat.Client;
+﻿using ConfigCat.Client;
 using StackExchange.Redis;
 
 namespace ConfigCatLambdaDemo;
@@ -23,28 +22,11 @@ public class RedisConfigCatCache : IConfigCatCache
 
     public async ValueTask<string?> GetAsync(string key, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            return await Database.StringGetAsync(key);
-        }
-        catch (RedisException e)
-        {
-            // Log get warning 
-            LambdaLogger.Log($"Error getting redis cache value: {e}");
-            return null;
-        }
+        return await Database.StringGetAsync(key);
     }
 
     public async ValueTask SetAsync(string key, string value, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await Database.StringSetAsync(key, value);
-        }
-        catch (RedisException e)
-        {
-            // Log set warning
-            LambdaLogger.Log($"Error setting redis cache value: {e}");
-        }
+        await Database.StringSetAsync(key, value);
     }
 }
