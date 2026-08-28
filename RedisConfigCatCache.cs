@@ -1,5 +1,4 @@
-﻿using Amazon.Lambda.Core;
-using ConfigCat.Client;
+﻿using ConfigCat.Client;
 using StackExchange.Redis;
 
 namespace ConfigCatLambdaDemo;
@@ -8,13 +7,15 @@ public class RedisConfigCatCache : IConfigCatCache
 {
     private readonly Lazy<ConnectionMultiplexer> _connection;
 
-    public RedisConfigCatCache(string connectionString)
+    public RedisConfigCatCache(string connectionString, bool ssl)
     {
 
         var options = ConfigurationOptions.Parse(connectionString);
+
         options.AbortOnConnectFail = false;
         options.ConnectTimeout = 2000;
         options.SyncTimeout = 2000;
+        options.Ssl = ssl;
 
         _connection = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(options));
     }
@@ -23,28 +24,11 @@ public class RedisConfigCatCache : IConfigCatCache
 
     public async ValueTask<string?> GetAsync(string key, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            return await Database.StringGetAsync(key);
-        }
-        catch (RedisException e)
-        {
-            // Log get warning 
-            LambdaLogger.Log($"Error getting redis cache value: {e}");
-            return null;
-        }
+        return await Database.StringGetAsync(key);
     }
 
     public async ValueTask SetAsync(string key, string value, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await Database.StringSetAsync(key, value);
-        }
-        catch (RedisException e)
-        {
-            // Log set warning
-            LambdaLogger.Log($"Error setting redis cache value: {e}");
-        }
+        await Database.StringSetAsync(key, value);
     }
 }

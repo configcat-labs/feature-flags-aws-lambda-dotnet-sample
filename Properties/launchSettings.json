@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    // Be sure to have the AWS .NET Mock Lambda Test Tool installed. Execute `dotnet tool install -g Amazon.Lambda.TestTool-10.0`
+    // and adjust executablePath if necessary. You might need to run your IDE with administrator privileges for debugging to work.
+    // See also: https://github.com/aws/aws-lambda-dotnet/blob/master/Tools/LambdaTestTool/README.md
+    "Mock Lambda Test Tool (VS 2026)": {
+      "commandName": "Executable",
+      "executablePath": "%USERPROFILE%\\.dotnet\\tools\\dotnet-lambda-test-tool-10.0.exe",
+      "commandLineArgs": "--port 5050",
+      "workingDirectory": "./bin/Debug/net10.0"
+    }
+  }
+}
