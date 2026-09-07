@@ -15,7 +15,7 @@ public class Function
         var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-DEVELOPMENT";
         var cacheTimeToLive = TimeSpan.FromSeconds(5);
         var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Info);
-
+        // Use the Docker Redis cache setup in development
         var configCache = new RedisConfigCatCache("localhost:6379,password=myRedisPassword123,user=default");
 #else
         var sdkKey = Environment.GetEnvironmentVariable("CONFIGCAT_SDK_KEY")
@@ -27,11 +27,11 @@ public class Function
 
         var redisOssConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING") ?? throw new InvalidOperationException(
         "The REDIS_CONNECTION_STRING environment variable is not set.");
-
+        // Use ElastiCache when deployed to AWS
         var configCache = new ElastiCacheConfigCatCache(redisOssConnectionString);
 #endif
 
-        // Configure the ConfigCat client to use the Redis cache
+        // Configure the ConfigCat client to use the appropriate Redis cache
         _configCatClient = ConfigCatClient.Get(sdkKey, options =>
         {
             options.ConfigCache = configCache;
@@ -45,13 +45,6 @@ public class Function
         // Ensure the flag key here matches the one in your ConfigCat Dashboard
         var isFeatureEnabled = await _configCatClient.GetValueAsync("myFeatureFlag", false);
 
-        if (isFeatureEnabled)
-        {
-            return "Result returned by new logic";
-        }
-        else
-        {
-            return "Result returned by old logic";
-        }
+        return isFeatureEnabled ? "Result returned by new logic" : "Result returned by old logic";
     }
 }
