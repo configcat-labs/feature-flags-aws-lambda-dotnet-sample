@@ -13,22 +13,29 @@ public class Function
     {
 #if DEBUG
         var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-DEVELOPMENT";
-        var logLevel = ConfigCat.Client.LogLevel.Info;
         var cacheTimeToLive = TimeSpan.FromSeconds(5);
-#else
-        var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-PRODUCTION";
-        var logLevel = ConfigCat.Client.LogLevel.Warning;
-        var cacheTimeToLive = TimeSpan.FromSeconds(60);
-#endif
+        var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Info);
 
-        // Credentials to connect to the local Redis server
-        var redisConnectionString = "localhost:6379,password=myRedisPassword123,user=default";
+        var configCache = new RedisConfigCatCache("localhost:6379,password=myRedisPassword123,user=default");
+#else
+        var sdkKey = Environment.GetEnvironmentVariable("CONFIGCAT_SDK_KEY")
+        ?? throw new InvalidOperationException(
+        "The CONFIGCAT_SDK_KEY environment variable is not set.");
+
+        var cacheTimeToLive = TimeSpan.FromSeconds(60);
+        var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Warning);
+
+        var redisOssConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING") ?? throw new InvalidOperationException(
+        "The REDIS_CONNECTION_STRING environment variable is not set.");
+
+        var configCache = new ElastiCacheConfigCatCache(redisOssConnectionString);
+#endif
 
         // Configure the ConfigCat client to use the Redis cache
         _configCatClient = ConfigCatClient.Get(sdkKey, options =>
         {
-            options.ConfigCache = new RedisConfigCatCache(redisConnectionString);
-            options.Logger = new ConfigCatToLambdaLoggerAdapter(logLevel);
+            options.ConfigCache = configCache;
+            options.Logger = logger;
             options.PollingMode = PollingModes.LazyLoad(cacheTimeToLive);
         });
     }
