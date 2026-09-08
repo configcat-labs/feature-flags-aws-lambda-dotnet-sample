@@ -16,19 +16,24 @@ public class Function
         var cacheTimeToLive = TimeSpan.FromSeconds(5);
         var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Info);
         // Use the Docker Redis cache setup in development
-        var configCache = new RedisConfigCatCache("localhost:6379,password=myRedisPassword123,user=default");
+        var configCache = new RedisConfigCatCache("localhost:6379,password=myRedisPassword123,user=default", false);
 #else
-        var sdkKey = Environment.GetEnvironmentVariable("CONFIGCAT_SDK_KEY")
-        ?? throw new InvalidOperationException(
-        "The CONFIGCAT_SDK_KEY environment variable is not set.");
+        var sdkKey = Environment.GetEnvironmentVariable("CONFIGCAT_SDK_KEY");
+        if (string.IsNullOrWhiteSpace(sdkKey))
+        {
+            throw new InvalidOperationException("The CONFIGCAT_SDK_KEY environment variable is not set.");
+        }
 
         var cacheTimeToLive = TimeSpan.FromSeconds(60);
         var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Warning);
 
-        var redisOssConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING") ?? throw new InvalidOperationException(
-        "The REDIS_CONNECTION_STRING environment variable is not set.");
+        var redisOssConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
+        if (string.IsNullOrWhiteSpace(redisOssConnectionString))
+        {
+            throw new InvalidOperationException("The REDIS_CONNECTION_STRING environment variable is not set.");
+        }
         // Use ElastiCache when deployed to AWS
-        var configCache = new ElastiCacheConfigCatCache(redisOssConnectionString);
+        var configCache = new RedisConfigCatCache(redisOssConnectionString, true);
 #endif
 
         // Configure the ConfigCat client to use the appropriate Redis cache
@@ -45,6 +50,13 @@ public class Function
         // Ensure the flag key here matches the one in your ConfigCat Dashboard
         var isFeatureEnabled = await _configCatClient.GetValueAsync("myFeatureFlag", false);
 
-        return isFeatureEnabled ? "Result returned by new logic" : "Result returned by old logic";
+        if (isFeatureEnabled)
+        {
+            return "Result returned by new logic";
+        }
+        else
+        {
+            return "Result returned by old logic";
+        }
     }
 }

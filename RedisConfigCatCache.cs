@@ -7,13 +7,15 @@ public class RedisConfigCatCache : IConfigCatCache
 {
     private readonly Lazy<ConnectionMultiplexer> _connection;
 
-    public RedisConfigCatCache(string connectionString)
+    public RedisConfigCatCache(string connectionString, bool ssl)
     {
 
         var options = ConfigurationOptions.Parse(connectionString);
+
         options.AbortOnConnectFail = false;
         options.ConnectTimeout = 2000;
         options.SyncTimeout = 2000;
+        options.Ssl = ssl;
 
         _connection = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(options));
     }
