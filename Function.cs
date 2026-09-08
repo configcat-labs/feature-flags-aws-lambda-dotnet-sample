@@ -36,7 +36,7 @@ public class Function
         var configCache = new RedisConfigCatCache(redisOssConnectionString, true);
 #endif
 
-        // Configure the ConfigCat client to use the appropriate Redis cache
+        // Configure the ConfigCat client to use the Redis cache
         _configCatClient = ConfigCatClient.Get(sdkKey, options =>
         {
             options.ConfigCache = configCache;
