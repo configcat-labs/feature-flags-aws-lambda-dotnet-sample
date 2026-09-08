@@ -25,21 +25,21 @@ You will need a few tools installed and accounts set up. Free tiers work perfect
 
 1. Build the project:
 
-```bash
-dotnet build
-```
+   ```bash
+   dotnet build
+   ```
 
 2. Spin up a Redis server locally using Docker:
 
-```bash
-docker compose up -d
-```
+   ```bash
+   docker compose up -d
+   ```
 
 3. Run the Lambda Test Tool:
 
-```bash
-dotnet lambda-test-tool-10.0
-```
+   ```bash
+   dotnet lambda-test-tool-10.0
+   ```
 
 4. When launched, click the **Execute Function** button. The **Response** and **Log Output** show the result of feature flag evaluation, based on the data cached in Redis.
 
@@ -47,15 +47,15 @@ dotnet lambda-test-tool-10.0
 
 1. Deploy the function to AWS Lambda:
 
-``` bash
-dotnet lambda deploy-function ConfigCatLambdaDemo
-```
+   ``` bash
+   dotnet lambda deploy-function ConfigCatLambdaDemo
+   ```
 
 2. Once deployed, invoke the function directly from the CLI to see the result immediately:
 
-```bash
-dotnet lambda invoke-function ConfigCatLambdaDemo
-```
+   ```bash
+   dotnet lambda invoke-function ConfigCatLambdaDemo
+   ```
 
 ## Learn more
 
@@ -78,4 +78,3 @@ Keep up with ConfigCat on [X](https://x.com/configcat), [Facebook](https://www.f
 ## Contributions
 
 Contributions are welcome!
-
