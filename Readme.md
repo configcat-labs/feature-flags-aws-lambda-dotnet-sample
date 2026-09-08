@@ -1,49 +1,85 @@
-# AWS Lambda Empty Function Project
+# Feature Flags in Microservices and Serverless Architecture (AWS Lambda and .NET)
 
-This starter project consists of:
-* Function.cs - class file containing a class with a single function handler method
-* aws-lambda-tools-defaults.json - default argument settings for use with Visual Studio and command line deployment tools for AWS
+**[Read the blog post here](https://configcat.com/blog/feature-flags-aws-lambda-dotnet/)**
 
-You may also have a test project depending on the options selected.
+A sample app demonstrating how to use [ConfigCat feature](https://configcat.com) flags in an AWS Lambda function with .NET10 runtime.
 
-The generated function handler is a simple method accepting a string argument that returns the uppercase equivalent of the input string. Replace the body of this method, and parameters, to suit your needs. 
+## Build & Run
 
-## Here are some steps to follow from Visual Studio:
+Instructions on how to build and run the application locally.
 
-To deploy your function to AWS Lambda, right click the project in Solution Explorer and select *Publish to AWS Lambda*.
+### Prerequisites
 
-To view your deployed function open its Function View window by double-clicking the function name shown beneath the AWS Lambda node in the AWS Explorer tree.
+To follow this tutorial, you will need a few tools installed and accounts set up. Don't worry, free tiers work perfectly for everything here.
 
-To perform testing against your deployed function use the Test Invoke tab in the opened Function View window.
+- **A ConfigCat account:** You can sign up for a [Forever Free account here](https://app.configcat.com/auth/signup).
+- **An AWS account:** You will need access to the AWS Console and a user with permissions to create Lambda functions.
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop/):** For this tutorial, you can use Docker to spin up a Redis server to run the Lambda locally (in production AWS environments, Amazon ElastiCache is typically used instead).
+- **Microsoft .NET SDK:** You will need the .NET 10 SDK or newer to build the project. [Download it here](https://dotnet.microsoft.com/download).
+- **Command line tools:**
+  - **[AWS .NET Mock Lambda Test Tool](https://github.com/aws/aws-lambda-dotnet/blob/master/Tools/LambdaTestTool):** Install the version matching your .NET SDK version as a [global .NET tool](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) (`dotnet tool install -g Amazon.Lambda.TestTool-10.0`).
+  - **[AWS CLI](https://aws.amazon.com/cli/):** Configure it with your credentials (`aws configure`).
+  - **[AWS Lambda Tools for .NET](https://github.com/aws/aws-extensions-for-dotnet-cli):** Install it as a [global .NET tool](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) (`dotnet tool install -g Amazon.Lambda.Tools`).
 
-To configure event sources for your deployed function, for example to have your function invoked when an object is created in an Amazon S3 bucket, use the Event Sources tab in the opened Function View window.
+### Local
 
-To update the runtime configuration of your deployed function use the Configuration tab in the opened Function View window.
+1. Build the project:
 
-To view execution logs of invocations of your function use the Logs tab in the opened Function View window.
-
-## Here are some steps to follow to get started from the command line:
-
-Once you have edited your template and code you can deploy your application using the [Amazon.Lambda.Tools Global Tool](https://github.com/aws/aws-extensions-for-dotnet-cli#aws-lambda-amazonlambdatools) from the command line.
-
-Install Amazon.Lambda.Tools Global Tools if not already installed.
-```
-    dotnet tool install -g Amazon.Lambda.Tools
+```bash
+dotnet build
 ```
 
-If already installed check if new version is available.
-```
-    dotnet tool update -g Amazon.Lambda.Tools
+2. Test the Lambda locally using Docker:
+
+```bash
+docker compose up -d
 ```
 
-Execute unit tests
-```
-    cd "ConfigCatLambdaDemo/test/ConfigCatLambdaDemo.Tests"
-    dotnet test
+3. Run the Lambda Test Tool:
+
+```bash
+dotnet lambda-test-tool-10.0
 ```
 
-Deploy function to AWS Lambda
+4. When launched, click the **Execute Function** button. The **Response** and **Log Output** show the result of feature flag evaluation, based on the data cached in Redis.
+
+### AWS
+
+1. Deploy the function to AWS Lambda:
+
+``` bash
+dotnet lambda deploy-function ConfigCatLambdaDemo
 ```
-    cd "ConfigCatLambdaDemo/src/ConfigCatLambdaDemo"
-    dotnet lambda deploy-function
+
+2. Once deployed, invoke the function directly from the CLI to see the result immediately:
+
+```bash
+dotnet lambda invoke-function ConfigCatLambdaDemo
 ```
+
+## Learn more
+
+Useful links to technical resources:
+
+- [.NET Documentation](https://learn.microsoft.com/en-us/dotnet/)
+- [AWS Lambda Documentation](https://docs.aws.amazon.com/lambda/)
+
+[**ConfigCat**](https://configcat.com) supports many other frameworks and languages. Check out the full list of supported SDKs [here](https://configcat.com/docs/sdk-reference/overview/).
+
+You can also explore other code samples for various languages, frameworks, and topics in [ConfigCat labs](https://github.com/configcat-labs) on GitHub.
+
+Keep up with ConfigCat on [X](https://x.com/configcat), [Facebook](https://www.facebook.com/configcat), [LinkedIn](https://www.linkedin.com/company/configcat/), [GitHub](https://github.com/configcat), and the [News & Product Updates](https://configcat.com/docs/news/) page.
+
+## Authors
+
+- [adams85](https://github.com/adams85)
+- [Chavez Harris](https://github.com/codedbychavez)
+
+## Contributions
+
+Contributions are welcome!
+
+
+
+
+
