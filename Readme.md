@@ -2,7 +2,7 @@
 
 **[Read the blog post here](https://configcat.com/blog/feature-flags-aws-lambda-dotnet/)**
 
-A sample app demonstrating how to use [ConfigCat feature](https://configcat.com) flags in an AWS Lambda function with .NET10 runtime.
+A sample app demonstrating how to use [ConfigCat feature flags](https://configcat.com) in an AWS Lambda function running on .NET.
 
 ## Build & Run
 
@@ -10,11 +10,11 @@ Instructions on how to build and run the application locally.
 
 ### Prerequisites
 
-To follow this tutorial, you will need a few tools installed and accounts set up. Don't worry, free tiers work perfectly for everything here.
+You will need a few tools installed and accounts set up. Free tiers work perfectly for everything here.
 
 - **A ConfigCat account:** You can sign up for a [Forever Free account here](https://app.configcat.com/auth/signup).
 - **An AWS account:** You will need access to the AWS Console and a user with permissions to create Lambda functions.
-- **[Docker Desktop](https://www.docker.com/products/docker-desktop/):** For this tutorial, you can use Docker to spin up a Redis server to run the Lambda locally (in production AWS environments, Amazon ElastiCache is typically used instead).
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop/):** You can use Docker to spin up a Redis server to run the Lambda locally. (In production AWS environments, Amazon ElastiCache is typically used instead.)
 - **Microsoft .NET SDK:** You will need the .NET 10 SDK or newer to build the project. [Download it here](https://dotnet.microsoft.com/download).
 - **Command line tools:**
   - **[AWS .NET Mock Lambda Test Tool](https://github.com/aws/aws-lambda-dotnet/blob/master/Tools/LambdaTestTool):** Install the version matching your .NET SDK version as a [global .NET tool](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools) (`dotnet tool install -g Amazon.Lambda.TestTool-10.0`).
@@ -29,7 +29,7 @@ To follow this tutorial, you will need a few tools installed and accounts set up
 dotnet build
 ```
 
-2. Test the Lambda locally using Docker:
+2. Spin up a Redis server locally using Docker:
 
 ```bash
 docker compose up -d
@@ -78,8 +78,4 @@ Keep up with ConfigCat on [X](https://x.com/configcat), [Facebook](https://www.f
 ## Contributions
 
 Contributions are welcome!
-
-
-
-
 
