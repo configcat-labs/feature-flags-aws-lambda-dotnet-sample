@@ -5,6 +5,11 @@ using ConfigCat.Client;
 
 namespace ConfigCatLambdaDemo;
 
+public class Request
+{
+    public string UserId { get; set; } = string.Empty;
+}
+
 public class Function
 {
     private static readonly IConfigCatClient _configCatClient;
@@ -12,7 +17,7 @@ public class Function
     static Function()
     {
 #if DEBUG
-        var sdkKey = "YOUR-CONFIGCAT-SDK-KEY-FOR-DEVELOPMENT";
+        var sdkKey = "configcat-sdk-1/ePDeCKAUtkKOomwjpP0MZA/z39x6KuziUKeka6qO1G8cQ";
         var cacheTimeToLive = TimeSpan.FromSeconds(5);
         var logger = new ConfigCatToLambdaLoggerAdapter(ConfigCat.Client.LogLevel.Info);
         // Use the Docker Redis cache setup in development
@@ -45,10 +50,15 @@ public class Function
         });
     }
 
-    public static async Task<string> FunctionHandler(ILambdaContext context)
+    public static async Task<string> FunctionHandler(
+        Request request,
+        ILambdaContext context
+        )
     {
+        // Get the userId from the request
+        var user = new User(request.UserId);
         // Ensure the flag key here matches the one in your ConfigCat Dashboard
-        var isFeatureEnabled = await _configCatClient.GetValueAsync("myFeatureFlag", false);
+        var isFeatureEnabled = await _configCatClient.GetValueAsync("myFeatureFlag", false, user);
 
         if (isFeatureEnabled)
         {
